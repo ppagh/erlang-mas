@@ -61,7 +61,7 @@ meeting_proxy({migration, _Agents}, mas_sequential, _SimParams, _Config) ->
     [];
 
 meeting_proxy({migration, Agents}, mas_hybrid, _SimParams, _Config) ->
-    [mas_hybrid:sendAgent(Agent) || Agent <- Agents],
+    mas_broker:send_agents(Agents),
     [];
 
 meeting_proxy({migration, _Agents}, mas_concurrent, _SimParams, _Config) ->
