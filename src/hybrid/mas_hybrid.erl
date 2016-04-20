@@ -26,6 +26,7 @@
 %% ====================================================================
 -spec start(Time::pos_integer(), sim_params(), config()) -> [agent()].
 start(Time, SP, Cf) ->
+    mas_broker:init(),
     {ok, _} = gen_server:start({local, ?MODULE}, ?MODULE, [Time, SP, Cf], []),
     register(?RESULT_SINK, self()),
     Islands = [receive_results() || _ <- lists:seq(1, Cf#config.islands)],
