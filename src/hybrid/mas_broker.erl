@@ -23,7 +23,6 @@ send_to_node(_, []) ->
   ok;
 
 send_to_node(Node, Agents) ->
-  io:format("Migrating agents to ~s~n", [Node]),
   spawn(Node, fun() -> mas_broker:migrate_agents(Agents) end).
 
 group_agents(Agents) ->

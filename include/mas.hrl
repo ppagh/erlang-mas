@@ -10,6 +10,7 @@
                  log_dir :: atom() | string(),
                  islands :: pos_integer(),
                  population_size :: pos_integer(),
+                 world_migration_probability :: float(),
                  migration_probability :: float(),
                  write_interval :: pos_integer(),
                  skel_workers :: pos_integer(),

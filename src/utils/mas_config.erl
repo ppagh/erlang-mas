@@ -25,6 +25,7 @@ proplist_to_record(Options) ->
             ?LOAD(Proplist, agent_env),
             ?LOAD(Proplist, topology),
             ?LOAD(Proplist, migration_probability),
+            ?LOAD(Proplist, world_migration_probability),
             ?LOAD(Proplist, log_dir),
             ?LOAD(Proplist, islands),
             ?LOAD(Proplist, population_size),
@@ -48,6 +49,9 @@ options_specs() ->
 
      {migration_probability,  undefined,  "migration_probability",   {float, 0.0001},
       "The probability of migration of an agent with positive energy"},
+
+     {world_migration_probability,  undefined,  "world_migration_probability",   {float, 0.00001},
+      "The probability of migration of an agent between worlds (nodes)"},
 
      {log_dir,                $L,          "log_dir",                {atom, standard_io},
      "The default path to write the logs to. The `standard_io` atom cause the logs to be sent to the standard output"},

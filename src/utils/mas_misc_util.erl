@@ -60,8 +60,15 @@ generate_population(SP, Cf) ->
 meeting_proxy({migration, _Agents}, mas_sequential, _SimParams, _Config) ->
     [];
 
-meeting_proxy({migration, Agents}, mas_hybrid, _SimParams, _Config) ->
-    mas_broker:send_agents(Agents),
+meeting_proxy({migration, Agents}, mas_hybrid, _SimParams, #config{world_migration_probability = WMP}) ->
+    case random:uniform() > WMP of
+        true ->
+          mas_broker:migrate_agents(Agents),
+          io:format("Island migration~n");
+        false ->
+          io:format("World migration~n"),
+          mas_broker:send_agents(Agents)
+    end,
     [];
 
 meeting_proxy({migration, _Agents}, mas_concurrent, _SimParams, _Config) ->
