@@ -48,7 +48,7 @@ exometer_init(Options) ->
                       exometer_report:mod_state()) -> {ok, state()}.
 exometer_report(Metric, _Datapoint, _Extra, Value, St = #state{fds = Dict}) ->
     FD = dict:fetch(Metric, Dict),
-    file:write(FD, io_lib:fwrite("~p ~w\n", [Metric, Value])),
+    file:write(FD, io_lib:fwrite("~w ~p ~w\n", [node(), Metric, Value])),
     {ok, St}.
 
 
