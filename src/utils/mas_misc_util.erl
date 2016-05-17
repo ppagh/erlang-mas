@@ -60,20 +60,13 @@ generate_population(SP, Cf) ->
 meeting_proxy({migration, _Agents}, mas_sequential, _SimParams, _Config) ->
     [];
 
-meeting_proxy({migration, Agents}, mas_hybrid, _SimParams, #config{world_migration_probability = WMP}) ->
-    case random:uniform() > WMP of
-        true ->
-          mas_broker:migrate_agents(Agents);
-        false ->
-          mas_broker:send_agents(Agents)
-    end,
+meeting_proxy({migration, Agents}, mas_hybrid, _SimParams, _Config) ->
+    mas_broker:migrate_agents(Agents),
     [];
 
-meeting_proxy({migration, _Agents}, mas_concurrent, _SimParams, _Config) ->
+meeting_proxy({world_migration, Agents}, mas_hybrid, _SimParams, _Config) ->
+    mas_broker:send_agents(Agents),
     [];
-
-meeting_proxy({migration, Agents}, mas_skel, _SimParams, _Config) ->
-    Agents;
 
 meeting_proxy(Group, _, SP, #config{agent_env = Env}) ->
     Env:meeting_function(Group, SP).
@@ -82,16 +75,19 @@ meeting_proxy(Group, _, SP, #config{agent_env = Env}) ->
 -spec behaviour_proxy(agent(), sim_params(), config()) ->
                              agent_behaviour() | migration.
 behaviour_proxy(Agent, SP, #config{migration_probability = MP,
+                                   world_migration_probability = WMP,
                                    agent_env = Env}) ->
-    case random:uniform() < MP of
-        true -> migration;
-        false -> Env:behaviour_function(Agent, SP)
+    ActionProbability = random:uniform(),
+    if
+        ActionProbability < MP -> migration;
+        ActionProbability < MP + WMP -> world_migration;
+        true -> Env:behaviour_function(Agent, SP)
     end.
 
 
 -spec determine_behaviours(config()) -> [agent_behaviour() | migration].
 determine_behaviours(#config{agent_env = Env}) ->
-    [migration | Env:behaviours()].
+    [migration, world_migration] ++ Env:behaviours().
 
 
 %% @doc Computes an average number of elements
