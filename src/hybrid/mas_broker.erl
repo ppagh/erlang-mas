@@ -10,7 +10,7 @@
 -export([send_agents/1, migrate_agents/1, init/0]).
 
 init() ->
-  [{Node, net_adm:ping(Node)} || Node <- net_adm:host_file()].
+  net_adm:world().
 
 send_agents(Agents) ->
   [send_to_node(Node, NodeAgents) || {Node, NodeAgents} <- group_agents(Agents)],
