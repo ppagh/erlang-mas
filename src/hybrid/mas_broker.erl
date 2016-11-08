@@ -1,4 +1,4 @@
-%% @author mbegejowicz <michalb@student.agh.edu.pl>
+%% @author mbegejowicz <michalb@student.agh.edu.pl>, bzurkowski <zurkowski.bartosz@gmail.com>
 %% @version 0.1
 %% @doc This is a migration broker module. It handles migrations between islands and nodes
 
@@ -26,7 +26,8 @@ send_to_node(Node, Agents) ->
   spawn(Node, fun() -> mas_broker:migrate_agents(Agents) end).
 
 group_agents(Agents) ->
-  lists:zip([node() | nodes()], part(length(nodes()) + 1, Agents)).
+  Nodes = nodes(),
+  lists:zip([node() | Nodes], part(length(Nodes) + 1, Agents)).
 
 part(1, List) ->
   [List];
