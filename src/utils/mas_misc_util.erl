@@ -61,11 +61,11 @@ meeting_proxy({migration, _Agents}, mas_sequential, _SimParams, _Config) ->
     [];
 
 meeting_proxy({migration, Agents}, mas_hybrid, _SimParams, _Config) ->
-    mas_broker:migrate_agents(Agents),
+    mas_broker:local_migration(Agents),
     [];
 
 meeting_proxy({world_migration, Agents}, mas_hybrid, _SimParams, _Config) ->
-    mas_broker:send_agents(Agents),
+    mas_broker:world_migration(Agents),
     [];
 
 meeting_proxy(Group, _, SP, #config{agent_env = Env}) ->
@@ -77,11 +77,10 @@ meeting_proxy(Group, _, SP, #config{agent_env = Env}) ->
 behaviour_proxy(Agent, SP, #config{migration_probability = MP,
                                    world_migration_probability = WMP,
                                    agent_env = Env}) ->
-    ActionProbability = random:uniform(),
-    if
-        ActionProbability < MP -> migration;
-        ActionProbability < MP + WMP -> world_migration;
-        true -> Env:behaviour_function(Agent, SP)
+    Probability = random:uniform(),
+    if Probability < MP -> migration;
+       Probability < MP + WMP -> world_migration;
+       Probability >= MP + WMP -> Env:behaviour_function(Agent, SP)
     end.
 
 

@@ -6,7 +6,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start/3,  sendAgent/1]).
+-export([start/3, send_agent/1]).
 %% gen_server
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
          code_change/3, send_result/1]).
@@ -34,8 +34,8 @@ start(Time, SP, Cf) ->
     lists:flatten(Islands).
 
 %% @doc Asynchronously sends an agent from an arena to the supervisor
--spec sendAgent(agent()) -> ok.
-sendAgent(Agent) ->
+-spec send_agent(agent()) -> ok.
+send_agent(Agent) ->
     gen_server:cast(whereis(?MODULE), {agent, self(), Agent}).
 
 %% @doc Asynchronously send back result from an island
@@ -81,7 +81,7 @@ handle_call(_, _, State) ->
 handle_cast({agent, From, Agent}, St = #state{pids = Pids}) ->
     IslandFrom = mas_misc_util:find(From, Pids),
     IslandTo = mas_topology:getDestination(IslandFrom),
-    mas_hybrid_island:sendAgent(lists:nth(IslandTo, Pids), Agent),
+    mas_hybrid_island:send_agent(lists:nth(IslandTo, Pids), Agent),
     {noreply, St}.
 
 -spec handle_info(Info :: timeout() | term(), State :: state())

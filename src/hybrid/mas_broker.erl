@@ -6,28 +6,39 @@
 
 -include ("mas.hrl").
 
+-export([init/0, local_migration/1, world_migration/1]).
+
+%% ====================================================================
 %% API
--export([send_agents/1, migrate_agents/1, init/0]).
+%% ====================================================================
 
 init() ->
   net_adm:world().
 
-send_agents(Agents) ->
-  [send_to_node(Node, NodeAgents) || {Node, NodeAgents} <- group_agents(Agents)],
-  ok.
 
-migrate_agents(Agents) ->
-  [mas_hybrid:sendAgent(Agent) || Agent <- Agents].
+local_migration(Agents) ->
+  [mas_hybrid:send_agent(Agent) || Agent <- Agents].
+
+
+world_migration(Agents) ->
+  [send_to_node(Node, AgentsGroup) || {Node, AgentsGroup} <- group_agents(Agents)].
+
+
+%% ====================================================================
+%% Internal functions
+%% ====================================================================
 
 send_to_node(_, []) ->
   ok;
 
 send_to_node(Node, Agents) ->
-  spawn(Node, fun() -> mas_broker:migrate_agents(Agents) end).
+  spawn(Node, fun() -> mas_broker:local_migration(Agents) end).
+
 
 group_agents(Agents) ->
   Nodes = nodes(),
   lists:zip([node() | Nodes], part(length(Nodes) + 1, Agents)).
+
 
 part(1, List) ->
   [List];

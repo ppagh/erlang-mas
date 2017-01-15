@@ -3,7 +3,7 @@
 %% @doc This module handles the logic of a single island in hybrid model
 
 -module(mas_hybrid_island).
--export([start/2, close/1, sendAgent/2]).
+-export([start/2, close/1, send_agent/2]).
 
 -include ("mas.hrl").
 
@@ -33,8 +33,8 @@ close(Pid) ->
 
 
 %% @doc Asynchronusly sends an agent immigrating to this island
--spec sendAgent(pid(), agent()) -> {agent, pid(), agent()}.
-sendAgent(Pid, Agent) ->
+-spec send_agent(pid(), agent()) -> {agent, pid(), agent()}.
+send_agent(Pid, Agent) ->
     Pid ! {agent, self(), Agent}.
 
 %% ====================================================================
